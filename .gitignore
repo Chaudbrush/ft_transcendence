@@ -1,0 +1,13 @@
+.env
+__pycache__
+backend/app/static/*
+
+docs
+
+dbdata/
+
+data/
+
+nginx/dist/*
+
+frontend/dist

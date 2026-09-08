@@ -1,0 +1,360 @@
+@import "tailwindcss";
+
+.rainbow-button {
+	animation: rainbow-button 15s linear infinite;
+}
+
+@keyframes rainbow-button {
+		100%,0%{
+			background-color: rgb(188, 0, 0);
+		}
+		8%{
+			background-color: rgb(198, 100, 1);
+		}
+		16%{
+			background-color: rgb(188, 188, 0);
+		}
+		25%{
+			background-color: rgb(93, 187, 0);
+		}
+		33%{
+			background-color: rgb(0, 184, 0);
+		}
+		41%{
+			background-color: rgb(0, 180, 90);
+		}
+		50%{
+			background-color: rgb(0, 189, 189);
+		}
+		58%{
+			background-color: rgb(0, 101, 203);
+		}
+		66%{
+			background-color: rgb(0, 0, 190);
+		}
+		75%{
+			background-color: rgb(92, 0, 184);
+		}
+		83%{
+			background-color: rgb(184, 0, 184);
+		}
+		91%{
+			background-color: rgb(186, 0, 93);
+		}
+}
+
+.board-south {
+    grid-column: 3 / 9;
+    grid-row: 10 / 13;
+}
+
+.board-north {
+    grid-column: 3 / 9;
+    grid-row: 1 / 4;
+}
+
+.board-east {
+    grid-column: 9 / 11;
+    grid-row: 2 / 10;
+}
+
+.board-west {
+    grid-column: 1 / 3;
+    grid-row: 2 / 10;
+}
+
+.avatar-south {
+	transform: translateY(-200%);
+}
+
+.avatar-north {
+	transform: translateY(110%);
+}
+
+.avatar-east {
+	transform: translateX(-80%);
+}
+
+.avatar-west {
+	transform: translateX(80%);
+}
+
+.emoticon-south {
+	transform: translateX(-120%) translateY(-190%);
+}
+
+.emoticon-north {
+	transform: translateX(120%) translateY(120%);
+}
+
+.emoticon-east {
+	transform: translateX(-120%) translateY(120%);
+}
+
+.emoticon-west {
+	transform: translateX(120%) translateY(-120%);
+}
+
+.emoticon-arrow-west {
+	position: absolute;
+    width: 0;
+    height: 0;
+    bottom: -1.1vw;
+    left: 50%;
+    transform: translateX(-100%);
+
+    border-left: 0.7vw solid transparent;
+    border-right: 0.7vw solid transparent;
+    border-top: 1vw solid black;
+}
+
+.emoticon-inner-west {
+	position: absolute;
+    width: 0;
+    height: 0;
+    top: -1.2vw;
+    left: -0.5vw;
+	transform: translateX(4%);
+    border-left: 0.5vw solid transparent;
+    border-right: 0.5vw solid transparent;
+    border-top: 0.8vw solid white;
+}
+
+.emoticon-arrow-east {
+	position: absolute;
+    width: 0;
+    height: 0;
+    top: -1.1vw;
+    right: 50%;
+    transform: translateX(100%);
+
+    border-left: 0.7vw solid transparent;
+    border-right: 0.7vw solid transparent;
+    border-bottom: 1vw solid black;
+}
+
+.emoticon-inner-east {
+	position: absolute;
+    width: 0;
+    height: 0;
+    bottom: -1.2vw;
+    right: -0.5vw;
+	transform: translateX(-4%);
+    border-left: 0.5vw solid transparent;
+    border-right: 0.5vw solid transparent;
+    border-bottom: 0.8vw solid white;
+}
+
+.emoticon-arrow-south {
+	position: absolute;
+    width: 0;
+    height: 0;
+    right: -1.1vw;
+    bottom: 50%;
+    transform: translateY(100%);
+
+    border-top: 0.7vw solid transparent;
+    border-bottom: 0.7vw solid transparent;
+    border-left: 1vw solid black;
+}
+
+.emoticon-inner-south {
+	position: absolute;
+    width: 0;
+    height: 0;
+    left: -1.2vw;
+    bottom: -0.5vw;
+	transform: translateY(-4%);
+    border-top: 0.5vw solid transparent;
+    border-bottom: 0.5vw solid transparent;
+    border-left: 0.8vw solid white;
+}
+
+.emoticon-arrow-north {
+	position: absolute;
+    width: 0;
+    height: 0;
+    left: -1.1vw;
+    top: 50%;
+    transform: translateY(-100%);
+
+    border-top: 0.7vw solid transparent;
+    border-bottom: 0.7vw solid transparent;
+    border-right: 1vw solid black;
+}
+
+.emoticon-inner-north {
+	position: absolute;
+    width: 0;
+    height: 0;
+    right: -1.2vw;
+    top: -0.5vw;
+	transform: translateY(4%);
+    border-top: 0.5vw solid transparent;
+    border-bottom: 0.5vw solid transparent;
+    border-right: 0.8vw solid white;
+}
+
+.card {
+	--card-scale: 1;
+	min-width: 30px;
+	width: calc(6vw * var(--card-scale));
+	aspect-ratio: 5 / 7;
+	flex-shrink: 0;
+	user-select: none;
+    -webkit-user-drag: none;
+	object-fit: cover;
+	border-radius: 5px;
+	border: 2px solid white;
+	box-sizing: border-box;
+	box-shadow: 4.0px 8.0px 8.0px black;
+}
+
+.card_small {
+	--card-scale: 0.8;
+}
+
+@media (min-width: 550px){
+	.card {
+		width: calc(6vw * var(--card-scale));
+		border: 2px solid white;
+	}
+}
+
+@media (min-width: 700px) {
+	.card {
+		width: calc(6vw * var(--card-scale));
+		border: 3px solid white;
+	}
+}
+
+@media (min-width: 900px) {
+	.card {
+		width: calc(6vw * var(--card-scale));
+		border: 4px solid white;
+	}
+}
+
+.box-card {
+	min-width: 30px;
+	z-index: 1;
+	display: inline-flex;
+	width: 6vw;
+    aspect-ratio: 5 / 7;
+    flex-shrink: 0;
+	transform: translateY(10%);
+}
+
+.box-card .card {
+    width: 100%;
+    height: 100%;
+}
+
+.box-card:hover .card-south {
+    transform: translateY(-30%);
+}
+
+.card-north {
+	transform: rotate(0deg) translateY(-25%);
+}
+
+.card-east {
+	transform: rotate(90deg) translateY(-50%);
+	margin: 0px 0px -30%;
+}
+
+.card-west {
+	transform: rotate(270deg) translateY(-50%);
+	margin: 0px 0px -30%;
+}
+
+.card-south {
+	transition: transform 0.15s ease;
+}
+
+.z-index:hover {
+	z-index: 100;
+}
+
+.arrow {
+	width: 70%;
+	height: 70%;
+	object-fit: contain;
+}
+
+.no-select {
+	user-select: none;
+    -webkit-user-drag: none;
+}
+
+.align {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.play-button {
+    background: linear-gradient(
+        to right,
+        #a5f3fc,
+        #bae6fd,
+        #fbcfe8
+    );
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+}
+
+.play-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(244, 114, 182, 0.8);
+}
+
+.play-button:active {
+    transform: scale(0.95);
+}
+
+.player_turn {
+    box-shadow: 0 0 15px 8px rgba(196, 181, 15, 0.8);
+}
+
+.footer {
+	color: #999999;
+}
+
+.footer:hover {
+	color: white;
+}
+
+.navbar {
+	color: white;
+	display: flex;
+	align-items: center;
+	padding: 8px 0;
+	gap: 8px;
+}
+
+.navbar:hover {
+	color: rgb(219, 219, 5);
+}
+
+.nav-button {
+	padding: 8px;
+	border-radius: 8px;
+}
+
+.nav-button:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 900px) {
+    .nav-button {
+        display: none;
+    }
+}
+
+.legal {
+	list-style-type: disc;
+	padding-left: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}

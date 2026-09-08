@@ -1,0 +1,227 @@
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - ft_network
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      - db
+    environment:
+      - ADMINER_DESIGN=pepa-linha-dark
+    networks:
+      - ft_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backend
+    pull_policy: never
+    container_name: backend
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    environment:
+      - API_V1_STR=${API_V1_STR}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - SECRET_KEY=${SECRET_KEY}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+      - DMODE=${DMODE}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - O42_CLIENT_ID=${O42_CLIENT_ID}
+      - O42_CLIENT_SECRET=${O42_CLIENT_SECRET}
+      - O42_REDIRECT_URI=${O42_REDIRECT_URI}
+      - O42_TOKEN_URL=${O42_TOKEN_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_network
+
+  redis:
+    image: redis:8.8.2-alpine
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - ft_network
+  
+  frontend_prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend_prod
+    pull_policy: never
+    container_name: frontend_prod
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - ./nginx/dist:/output
+    command:
+      - sh
+      - -ec
+      - |
+        rm -rf /output/*
+        npm run build
+        cp -r /app/dist/* /output/
+    networks:
+      - ft_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend
+    pull_policy: never
+    container_name: frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - ft_network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx
+    pull_policy: never
+    container_name: nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    networks:
+      - ft_network
+
+  nginx_prod:
+    build:
+      context: ./nginx
+      args:
+        BUILD_TARGET: prod
+      dockerfile: Dockerfile
+    image: nginx_prod
+    pull_policy: never
+    container_name: nginx_prod
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend_prod:
+        condition: service_completed_successfully
+    networks:
+      - ft_network
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    networks:
+      - ft_network
+
+  grafana:
+    image: grafana/grafana:11.6.6
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      # only our two folders, mounting the whole provisioning directory
+      # would hide the ones the image ships, alerting and plugins
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus
+    networks:
+      - ft_network
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    container_name: postgres-exporter
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/postgres_exporter.yml:/postgres_exporter.yml:ro
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ft_network
+
+networks:
+  ft_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  prometheus_data:
+  grafana_data:

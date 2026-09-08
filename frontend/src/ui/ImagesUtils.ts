@@ -1,0 +1,66 @@
+import back00 from '../assets/cardbacks/back_card_00.png';
+import back01 from '../assets/cardbacks/back_card_01.png';
+import back02 from '../assets/cardbacks/back_card_02.png';
+import back03 from '../assets/cardbacks/back_card_03.png';
+import back04 from '../assets/cardbacks/back_card_04.png';
+import bg from '../assets/utils/game_bg.png';
+import red from '../assets/utils/color_red.png';
+import blue from '../assets/utils/color_blue.png';
+import green from '../assets/utils/color_green.png';
+import yellow from '../assets/utils/color_yellow.png';
+import winner from '../assets/utils/winner.png';
+import arrow_01 from '../assets/utils/arrow_01.png';
+import arrow_02 from '../assets/utils/arrow_02.png';
+import _catch from '../assets/utils/catch.png';
+import uno from '../assets/utils/uno.png';
+
+import sad from '../assets/utils/sad.png';
+import angry from '../assets/utils/angry.png';
+import happy from '../assets/utils/happy.png';
+import nervous from '../assets/utils/nervous.png';
+import surprised from '../assets/utils/surprised.png';
+import confidence from '../assets/utils/confidence.png';
+
+import bot_ez from '../assets/avatar/bot_easy.png';
+import bot_md from '../assets/avatar/bot_medium.png';
+import bot_hd from '../assets/avatar/bot_hard.png';
+import offline from '../assets/avatar/offline.png';
+
+// Cardbacks
+export const cardBacks: Record<string, string> = {
+    back00,
+    back01,
+    back02,
+    back03,
+    back04,
+};
+
+export const defaultCardBack = back00;
+
+// Utils images
+export const bg_image = bg;
+export const winner_image = winner;
+export const direction_plus = arrow_01;
+export const direction_minus = arrow_02;
+
+// Square Colors
+export const color_red = red;
+export const color_blue = blue;
+export const color_green = green;
+export const color_yellow = yellow;
+
+// Emoticons
+export const emoticon_uno = uno;
+export const emoticon_catch = _catch;
+export const emoticon_sad = sad;
+export const emoticon_angry = angry;
+export const emoticon_happy = happy;
+export const emoticon_nervous = nervous;
+export const emoticon_surprised = surprised;
+export const emoticon_confidence = confidence;
+
+// Avatars
+export const bot_easy = bot_ez;
+export const bot_medium = bot_md;
+export const bot_hard = bot_hd;
+export const avatar_offline = offline;

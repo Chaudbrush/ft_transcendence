@@ -1,0 +1,70 @@
+import { Box, Container, Divider, Tabs, Tab } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { tab_text } from '../game/macrosConfig.ts';
+import CreateRoom from '../components/CreateRoom';
+import JoinPrivate from '../components/JoinPrivate';
+import JoinPublic from '../components/JoinPublic';
+import type { Room } from '../core/types.ts';
+
+function JoinRoom({rooms}: {rooms: Room[]})
+{
+	return (
+		<Box sx={{ height: '100%', width: '100%', display: 'flex', overflow: 'hidden' }}>
+			<JoinPublic rooms={rooms}/>
+			<Divider orientation="vertical" flexItem/>
+			<JoinPrivate />
+		</Box>
+	)
+}
+
+function JoinCreateLobby({ rooms }: { rooms: Room[]})
+{
+	const [value, setValue] = useState(0);
+
+	function handleChange(_: React.SyntheticEvent, newValue: number) {
+		setValue(newValue)
+	}
+
+	return (
+			<Container sx={{ height: '75dvh', width: { xs: '95%', md: '80%' }, display: 'flex', flexDirection: 'column',
+				my: 2, p: 0.5, border: '1px solid', borderColor: 'divider', borderRadius: 2, bgcolor: 'background.paper' }}>
+				<Tabs value={value} onChange={handleChange} sx={{ height: '10%', width:'100%' }} >
+					<Tab sx={{ ...tab_text, fontWeight: 700 }} label="JOIN GAME" />
+					<Tab sx={{ ...tab_text, fontWeight: 700 }} label="CREATE GAME" />
+				</Tabs>
+				<Box sx={{height: '90%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+						{value === 0 ? <JoinRoom rooms={rooms}/> : <CreateRoom rooms={rooms}/>}
+				</Box>
+			</Container>
+	)
+}
+
+function Lobby()
+{
+	const [rooms, setRooms] = useState<Room[]>([]);
+
+	useEffect(() => {
+		async function getRooms() {
+			try {
+				const response = await fetch('/api/rooms');
+	
+				if (!response.ok) {
+					throw new Error(`HTTP error: ${response.status}`);
+				}
+				
+				const rooms = await response.json();
+				setRooms(rooms);
+			}
+			catch (error) {
+				console.log('Request failed:', error);
+			}
+		}
+		getRooms();
+		const interval = setInterval(getRooms, 2000);
+		return () => clearInterval(interval);
+	}, []);
+
+	return (<JoinCreateLobby rooms={rooms}/>);
+}
+
+export default Lobby

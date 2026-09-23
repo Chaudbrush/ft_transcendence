@@ -1,4 +1,5 @@
 *This project has been created as part of the 42 curriculum by acaldeir, bliu, vloureir, rusilva-.*
+> **Note**: This repository is a standalone portfolio mirror of the collaborative 42 project developed in the team repository: [ruimouradev/ft_transcendence](https://github.com/ruimouradev/ft_transcendence).
 
 # ft_transcendence, Uno
 
